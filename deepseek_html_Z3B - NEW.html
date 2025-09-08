@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>衙幼中三班打卡系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Ma Shan Zheng', 'ZCOOL QingKe HuangYou', cursive, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(120deg, #ffcce6, #c9f5ff);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ff9ec0' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E");
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #ff9ec0, #ff6b8b);
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 8px 15px rgba(255, 107, 139, 0.3);
+            color: white;
+            position: relative;
+            overflow: hidden;
+            border: 4px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 0 #ff4d7a;
+            letter-spacing: 1px;
+        }
+        
+        .datetime {
+            font-size: 1.1rem;
+            margin-top: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .datetime div {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 6px 12px;
+            border-radius: 12px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .students-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .student-card {
+            background: linear-gradient(135deg, #fff, #f8f4ff);
+            border-radius: 15px;
+            padding: 12px 8px;
+            text-align: center;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.07);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid transparent;
+            background-clip: padding-box;
+        }
+        
+        .student-card::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            z-index: -1;
+            margin: -3px;
+            border-radius: inherit;
+            background: linear-gradient(135deg, #ff9ec0, #a5deff);
+        }
+        
+        .student-card:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.12);
+        }
+        
+        .student-card:active {
+            transform: scale(0.97);
+        }
+        
+        .avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            margin: 0 auto 8px;
+            border: 3px solid #ffc2d9;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ffc2d9, #a5deff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.6rem;
+            color: white;
+            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+        }
+        
+        .student-info {
+            margin-bottom: 5px;
+        }
+        
+        .student-name {
+            font-size: 1.1rem;
+            color: #ff6b8b;
+            margin-bottom: 4px;
+            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+        }
+        
+        .welcome-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 40px;
+            font-size: 1.2rem;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .welcome-message.show {
+            opacity: 1;
+        }
+        
+        .fullscreen-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff7043, #ff3d00);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 12px rgba(255, 61, 0, 0.3);
+            cursor: pointer;
+            z-index: 900;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .fullscreen-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .instructions {
+            text-align: center;
+            margin: 15px 0;
+            color: #ff6b8b;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 8px;
+            border-radius: 12px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .clouds {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 80px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cloud:before,
+        .cloud:after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+        }
+        
+        .cloud:before {
+            width: 30px;
+            height: 30px;
+            top: -15px;
+            left: 6px;
+        }
+        
+        .cloud:after {
+            width: 25px;
+            height: 25px;
+            top: -12px;
+            right: 6px;
+        }
+        
+        @media (max-width: 1024px) {
+            .students-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 10px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .students-grid {
+                grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+                gap: 8px;
+            }
+            
+            header h1 {
+                font-size: 1.4rem;
+            }
+            
+            .datetime {
+                flex-direction: column;
+                gap: 8px;
+                font-size: 0.9rem;
+            }
+            
+            .avatar {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
+            
+            .student-name {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="clouds" id="clouds"></div>
+    
+    <div class="container">
+        <header>
+            <h1>衙幼中三班打卡系统</h1>
+            <div class="datetime">
+                <div id="current-date">2023年11月10日 星期五</div>
+                <div id="current-time">12:00:00</div>
+            </div>
+        </header>
+        
+        <div class="instructions">
+            <p>点击小朋友姓名进行打卡，会播放欢迎语音哦~ <i class="fas fa-smile-wink"></i></p>
+        </div>
+        
+        <div class="students-grid">
+            <!-- 学生卡片将通过JavaScript动态生成 -->
+        </div>
+    </div>
+    
+    <div class="welcome-message" id="welcome-message">
+        欢迎小朋友！
+    </div>
+    
+    <div class="fullscreen-btn" id="fullscreen-btn">
+        <i class="fas fa-expand"></i>
+    </div>
+
+    <script>
+        // 学生数据 - 更新为新的名单
+        const students = [
+            { id: "1", name: "邱家宸" },
+            { id: "2", name: "张邓恩" },
+            { id: "3", name: "谢宇浩" },
+            { id: "4", name: "姚慕辰" },
+            { id: "5", name: "郭  庆" },
+            { id: "6", name: "陈浩阳" },
+            { id: "7", name: "黄馨丽" },
+            { id: "8", name: "朱慕妤" },
+            { id: "9", name: "汪亦可" },
+            { id: "10", name: "曾睦恩" },
+            { id: "11", name: "缪奕欢" },
+            { id: "12", name: "刘玉琪" },
+            { id: "13", name: "郭沐宸" },
+            { id: "14", name: "曹怡诺" },
+            { id: "15", name: "亓  震" },
+            { id: "16", name: "张可欣" },
+            { id: "17", name: "付筱舒" },
+            { id: "18", name: "暨陈科宇" },
+            { id: "19", name: "宋杨磊" },
+            { id: "20", name: "肖  碩" },
+            { id: "21", name: "杨依依" },
+            { id: "22", name: "魏盛洋" },
+            { id: "23", name: "尹鸣远" },
+            { id: "24", name: "朱慕橙" },
+            { id: "25", name: "罗赟杰" },
+            { id: "26", name: "石  龙" },
+            { id: "27", name: "郭嘉怡" },
+            { id: "28", name: "王嘉怡" }
+        ];
+        
+        // 初始化函数
+        function init() {
+            renderStudents();
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            setupFullscreenButton();
+            createClouds();
+        }
+        
+        // 渲染学生卡片
+        function renderStudents() {
+            const grid = document.querySelector('.students-grid');
+            grid.innerHTML = '';
+            
+            // 可爱的颜色数组
+            const colors = [
+                '#FF9E9E', '#FFD6A5', '#FFEA97', '#CBFFA9', 
+                '#A0E7E5', '#9DC1EE', '#B5A9F8', '#FFA9F8',
+                '#8DE0BB', '#8DD6E0', '#8DA5E0', '#C58DE0'
+            ];
+            
+            students.forEach((student, index) => {
+                const card = document.createElement('div');
+                card.className = 'student-card';
+                
+                // 使用学号作为头像内容
+                const studentId = student.id;
+                // 随机选择颜色
+                const color = colors[index % colors.length];
+                
+                card.innerHTML = `
+                    <div class="avatar" style="background: linear-gradient(135deg, ${color}, #ff9ec0);">
+                        ${studentId}
+                    </div>
+                    <div class="student-info">
+                        <div class="student-name">${student.name}</div>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => {
+                    welcomeStudent(student.name);
+                });
+                
+                grid.appendChild(card);
+            });
+        }
+        
+        // 更新日期和时间
+        function updateDateTime() {
+            const now = new Date();
+            
+            // 格式化日期
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const day = now.getDate();
+            const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            const weekday = weekdays[now.getDay()];
+            
+            document.getElementById('current-date').textContent = `${year}年${month}月${day}日 ${weekday}`;
+            
+            // 格式化时间
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+        
+        // 欢迎学生函数
+        function welcomeStudent(name) {
+            const message = document.getElementById('welcome-message');
+            message.textContent = `欢迎${name}小朋友！`;
+            message.classList.add('show');
+            
+            // 使用Web Speech API播放欢迎语音
+            if ('speechSynthesis' in window) {
+                const speech = new SpeechSynthesisUtterance(`欢迎${name}小朋友`);
+                speech.lang = 'zh-CN';
+                speech.rate = 0.9;
+                speech.pitch = 1.2;
+                window.speechSynthesis.speak(speech);
+            }
+            
+            // 3秒后隐藏欢迎消息
+            setTimeout(() => {
+                message.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 设置全屏按钮
+        function setupFullscreenButton() {
+            const fullscreenBtn = document.getElementById('fullscreen-btn');
+            
+            fullscreenBtn.addEventListener('click', toggleFullscreen);
+            
+            function toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => {
+                        console.log(`全屏请求错误: ${err.message}`);
+                    });
+                    fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                        fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                    }
+                }
+            }
+        }
+        
+        // 创建云朵背景
+        function createClouds() {
+            const cloudsContainer = document.getElementById('clouds');
+            const cloudCount = 8;
+            
+            for (let i = 0; i < cloudCount; i++) {
+                const cloud = document.createElement('div');
+                cloud.className = 'cloud';
+                
+                // 随机云朵大小和位置
+                const size = Math.random() * 60 + 30;
+                const top = Math.random() * 100;
+                const left = Math.random() * 100;
+                const opacity = Math.random() * 0.5 + 0.2;
+                const duration = Math.random() * 40 + 20;
+                
+                cloud.style.width = `${size}px`;
+                cloud.style.height = `${size / 2}px`;
+                cloud.style.top = `${top}%`;
+                cloud.style.left = `${left}%`;
+                cloud.style.opacity = opacity;
+                cloud.style.animation = `float ${duration}s linear infinite`;
+                
+                cloudsContainer.appendChild(cloud);
+            }
+            
+            // 添加云朵浮动动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes float {
+                    0% { transform: translateX(0) translateY(0); }
+                    50% { transform: translateX(${window.innerWidth / 2}px) translateY(6px); }
+                    100% { transform: translateX(${window.innerWidth}px) translateY(0); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
